@@ -7,7 +7,6 @@
 - Python 3.13
 - Docker и Docker Compose (для запуска в контейнере)
 - API-ключ от OpenWeatherMap (получите на https://openweathermap.org/)
-- Иконки погоды (см. раздел "Иконки погоды")
 
 ## Установка и запуск без Docker
 

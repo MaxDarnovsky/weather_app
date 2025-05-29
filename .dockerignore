@@ -1,0 +1,16 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+django_project_env/
+*.sqlite3
+*.log
+.git
+.gitignore
+.env
+static/
+Dockerfile
+docker-compose.yml

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз погоды</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Прогноз погоды</h1>
+        {% if last_city %}
+            <div class="last-city">
+                <p>Посмотреть погоду в {{ last_city }}? <button class="yes-button" onclick="$('#city').val('{{ last_city }}'); $('#weather-form').submit();">Да</button></p>
+            </div>
+        {% endif %}
+        <h2>Новый прогноз</h2>
+        <form id="weather-form" method="post">
+            {% csrf_token %}
+            <input type="text" id="city" name="city" placeholder="Введите город" required>
+            <select id="period-days" name="period_days">
+                <option value="1">1 день</option>
+                <option value="2">2 дня</option>
+                <option value="3">3 дня</option>
+                <option value="4">4 дня</option>
+                <option value="5">5 дней</option>
+            </select>
+            <button type="submit">Узнать</button>
+        </form>
+
+        {% if forecast and forecast.items %}
+            <h2>Прогноз для {{ request.POST.city }} на {{ request.POST.period_days }} {% if request.POST.period_days == '1' %}день{% else %}дней{% endif %}</h2>
+            {% for day, periods in forecast.items %}
+                <div class="day-forecast">
+                    <h3>{{ day|date:"m-d" }}</h3>
+                    <div class="forecast-container">
+                        {% for period in periods %}
+                            <div class="forecast-card">
+                                <p>{{ period.time }}</p>
+                                <p>{{ period.temp|floatformat:0 }}°C</p>
+                                <p>{{ period.description }}</p>
+                                <img src="{% static 'icons/'|add:period.icon|add:'.png' %}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% empty %}
+                <p>Прогноз недоступен. Попробуйте другой город.</p>
+            {% endfor %}
+        {% else %}
+            <p>Прогноз недоступен. Попробуйте другой город.</p>
+        {% endif %}
+
+        {% if history %}
+            <div class="history-toggle">
+                <button id="toggle-history">Посмотреть историю поиска</button>
+            </div>
+            <div class="history" style="display: none;">
+                <h3>История поиска</h3>
+                <ul>
+                    {% for item in history %}
+                        <li>{{ item.city }} ({{ item.period }} дней) - {{ item.timestamp|date:"d.m.Y H:i" }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#toggle-history').on('click', function() {
+                $('.history').slideToggle();
+                $(this).text($(this).text() === 'Посмотреть историю поиска' ? 'Скрыть историю поиска' : 'Посмотреть историю поиска');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -9,7 +9,7 @@ services:
       - .:/app
     environment:
       - DEBUG=True
-      - OPENWEATHERMAP_API_KEY=your_api_key_here  # Замени на свой API-ключ
+      - OPENWEATHERMAP_API_KEY='346e2fd17ab3fa37a1b84bf377ac9e5b'
     command: python manage.py runserver 0.0.0.0:8000
     depends_on:
       - db
